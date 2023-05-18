@@ -21,6 +21,10 @@ while true; do
   disk_used=$(df -h --output=used / | awk 'NR==2' | sed 's/G//' | tr -d '[:space:]')
   disk_free=$(df -h --output=avail / | awk 'NR==2' | sed 's/G//' | tr -d '[:space:]')
 
+  # 获取前10个CPU占用率最高的进程
+  cpu_top_processes=$(ps aux --sort=-%cpu | awk 'NR <= 11 && NR > 1 {if ($6 > 0 && $3 > 0) printf "PID: %s | COMMAND: %s | CPU使用率: %s%% | 内存: ", $2, $11, $3;
+  if ($6 >= 1024*1024) {printf "%.2fGB\n", $6/(1024*1024)} else {printf "%.2fMB\n", $6/1024} }')
+
   # 清空屏幕
   clear
 
@@ -33,7 +37,9 @@ while true; do
   echo -e "内存大小: $mem_total MB | 已使用: $mem_used MB | 未使用: $mem_free MB"
   echo "---------------------------磁盘信息--------------------------"
   echo -e "磁盘大小: $disk_total G | 已使用: $disk_used G | 未使用: $disk_free G"
-  echo "-------------------------------------------------------------"
+  echo "------------------------CPU使用率TOP10-----------------------"
+  echo -e "$cpu_top_processes"
+  
   # 暂停800毫秒
   sleep 0.8
 done
