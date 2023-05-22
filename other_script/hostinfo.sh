@@ -11,11 +11,6 @@ while true; do
   cpu_idle=$(awk -v usage="$cpu_usage" 'BEGIN {print 100 - usage}')
   load_average=$(cat /proc/loadavg | awk '{print $1, $2, $3}')
 
-  # 获取内存信息
-  mem_total=$(free -m | awk '/^Mem:/ {print $2}')
-  mem_used=$(free -m | awk '/^Mem:/ {print $6 - $3}')
-  mem_free=$((mem_total - mem_used))
-
   # 获取硬盘信息
   disk_total=$(df -h --output=size / | awk 'NR==2' | sed 's/G//' | tr -d '[:space:]')
   disk_used=$(df -h --output=used / | awk 'NR==2' | sed 's/G//' | tr -d '[:space:]')
@@ -29,8 +24,6 @@ while true; do
   echo -e "CPU核心: $cpu_count 核心 |  CPU型号: $cpu_model $cpu_frequency MHz"
   echo "--------------------------CPU负载----------------------------"
   echo -e "CPU使用率: $cpu_usage % | CPU空闲率: $cpu_idle % | 负载参数: $load_average"
-  echo "--------------------------内存信息---------------------------"
-  echo -e "内存大小: $mem_total MB | 已使用: $mem_used MB | 未使用: $mem_free MB"
   echo "---------------------------磁盘信息--------------------------"
   echo -e "磁盘大小: $disk_total G | 已使用: $disk_used G | 未使用: $disk_free G"
   echo "-------------------------------------------------------------"
